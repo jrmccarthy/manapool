@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
 ## Getting Started
 
-First, run the development server:
+First, you'll want to install Node and NPM (and I recommend PNPM). Honestly I'd recommend consulting Node's website for this because its not easily done through things like Apt or other OS Package managers.
+
+Next, install all the deps:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+```
+
+Finally, run the development server:
+
+```bash
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Using the app
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Its a simple app that just displays items from your ManaPool inventory in a poorly styled table.
 
-## Learn More
+To use it, enter your ManaPool email and API Access Key into the fields at the top, and then press Load Inventory. The app should (via a proxy to the NextJS backend to avoid CORS issues) make a request to ManaPool's seller inventory page, and then it should dump a bunch of basic data about your inventory to the screen.
 
-To learn more about Next.js, take a look at the following resources:
+# IMPORTANT
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This was working fine on my account... at first. Then I decided to add a Glaring Fleshraker to my account, to increase the number of cards. At that point, I believe the ManaPool API stopped sending me valid data if I asked for GZIP Compression and started sending broken responses, which of course broke the App's display.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+I troubleshooted this for a while, copying requests into CURL and playing around with the headers, and even "deleted" (set to zero) my fleshrakers and added a new card to no avail. With CURL, I am able to get back properly formatted data if I either don't ask for compression, or specify `deflate` as my `accept-encoding`. If I ask for compression and include `gzip` in `accept-encoding`, CURL cannot process the response either and gives me a parsing error. This meant that I could access the API with CURL without error.
 
-## Deploy on Vercel
+However, `accept-encoding` is a so-called [Forbidden Request Header](https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_request_header). In a nutshell, I'm not allowed to tell my web app to set those because they are reserved for the User Agent (the browser), so I can't really fix this problem, at least I could not with some time troubleshooting and using Typescript's `fetch` API. I'll admit that I'm definitely more knowledgable about Python than Javascript internals, so maybe I could have hacked my way around it there, but with cursory efforts did not produce any results.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+So I promise the app DOES work, but only if the server returns a parsable response (which in this case would suggest the server returning a non-gzipped response, or getting fixed, or whatever horrible curse has befallen my user account getting fixed). Pretty cool, eh?

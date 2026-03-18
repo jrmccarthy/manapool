@@ -1,6 +1,6 @@
 ## Getting Started
 
-Before we start, if you're reading this from a ZIP File, know that you can also find this App on Github at (https://github.com/jrmccarthy/manapool)[https://github.com/jrmccarthy/manapool].
+Before we start, if you're reading this from a ZIP File, know that you can also find this App on Github at https://github.com/jrmccarthy/manapool.
 
 First, you'll want to install Node and NPM (and I recommend PNPM). Honestly I'd recommend consulting Node's website for this because its not easily done through things like Apt or other OS Package managers.
 
